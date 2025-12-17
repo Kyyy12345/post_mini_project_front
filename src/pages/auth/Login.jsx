@@ -10,7 +10,7 @@ function Login() {
     const navigate = useNavigate();
 
     const handleOAuth2LoginOnClick = (e) => {
-        const clientName = e.target.id;
+        const clientName = e.target.id; //클릭된 버튼의 id(ex.naver, google, kakao)
         navigate("http://localhost:8080/oauth2/authorization/" + clientName);
     }
 

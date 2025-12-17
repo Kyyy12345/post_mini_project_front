@@ -7,7 +7,9 @@ function MainLayout({children}) {
     return <div css={s.layout}>
         <div css={s.frame}>
             <div css={s.frameContainer}>
-                {children}
+                <div>
+                    {children}  {/*AuthRoute의 결과를 표시할 준비*/}
+                </div>
             </div>
         </div>
     </div>

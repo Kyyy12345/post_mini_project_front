@@ -24,3 +24,11 @@ createRoot(root).render(
         </BrowserRouter>
     </QueryClientProvider>
 )
+
+// main.jsx는 App 컴포넌트를 최종 사용자 화면에 렌더링하기 전에, 앱이 원활하게 작동하는 데 필수적인 세 가지 핵심 환경을 준비하는 역할을 합니다.
+
+// TanStack Query: <QueryClientProvider>를 통한 서버 상태 관리.
+
+// React Router: <BrowserRouter>를 통한 클라이언트 측 라우팅.
+
+// Emotion: <Global>을 통한 전역 CSS 스타일 적용.
