@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import ReactModal from "react-modal";
-import * as s from "./styles";
+import  * as s  from "./styles";
 import { useMeQuery } from "../../queries/usersQueries";
 import Loading from "../common/Loading";
 import Select from "react-select";
@@ -15,20 +15,20 @@ function AddPostModal({isOpen, onRequestClose, layoutRef}) {
     const [ textareaValue, setTextareaValue ] = useState("");
     const [ uploadImages, setUploadImages ] = useState([]);
     const imageListBoxRef = useRef();
-    const {isLoading, data} = useMeQuery(); //자동 get요청
-    const createPostMutation = useCreatePostMutation(); //원할때
+    const {isLoading, data} = useMeQuery();
+    const createPostMutation = useCreatePostMutation();
 
-    const handleOnWheel = (e) => {  
+    const handleOnWheel = (e) => {
         imageListBoxRef.current.scrollLeft += e.deltaY;
     }
 
+    // 이미지 리스트를 받는 click 생성
     const handleFileLoadOnClick = () => {
         const fileInput = document.createElement("input");
         fileInput.setAttribute("type", "file");
         fileInput.setAttribute("accept", "image/*");
         fileInput.setAttribute("multiple", "true");
         fileInput.click();
-
         fileInput.onchange = (e) => {
             const {files} = e.target;
             const fileArray = Array.from(files);
@@ -39,28 +39,28 @@ function AddPostModal({isOpen, onRequestClose, layoutRef}) {
                 fileReader.onload = (e) => {
                     resolve({
                         file,
-                        dataURL: e.target.result,
-                    });
+                        dataUrl: e.target.result,
+                    })
                 }
             });
-
-            Promise
-            .all(fileArray.map(file => readFile(file)))
+            Promise.all(fileArray.map(file => readFile(file)))
             .then(result => {
                 setUploadImages([...uploadImages, ...result]);
-            });
+            })
         }
     }
 
+    // 이미지 삭제 클릭 로직
     const handleImageDeleteOnClick = (index) => {
         const deletedImages = uploadImages.filter((img, imgIndex) => imgIndex !== index);
         setUploadImages(deletedImages);
     }
-
+    // 데이터 formData형식으로 묶어서 Post 해주는 로직
     const handlePostSubmitOnClick = async () => {
         const formData = new FormData();
         formData.append("visibility", visibilityOption.value);
         formData.append("content", textareaValue);
+        // 이미지는 여러개 이기 때문에 반복을 돌려 데이터를 꺼내줌
         for (let img of uploadImages) {
             formData.append("files", img.file);
         }
@@ -68,7 +68,7 @@ function AddPostModal({isOpen, onRequestClose, layoutRef}) {
             await createPostMutation.mutateAsync(formData);
             alert("작성 완료");
             onRequestClose();
-        } catch(error) {
+        } catch (error) {
             alert(error.response.data.message);
         }
     }
@@ -76,7 +76,7 @@ function AddPostModal({isOpen, onRequestClose, layoutRef}) {
     if (isLoading) {
         return <Loading />
     }
-
+    // content => 안에 들어있는 박스, overlay => 바깥 바탕
     return <ReactModal 
         style={{
             overlay: {
@@ -86,11 +86,11 @@ function AddPostModal({isOpen, onRequestClose, layoutRef}) {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "#00000000"
+                backgroundColor: "#00000000",
             },
             content: {
                 position: "static",
-                boxShadow: "0 0 10px 5px #00000033",
+                boxShadow: "0 0 5px 5px #00000033",
                 padding: "0",
             }
         }}
@@ -100,7 +100,7 @@ function AddPostModal({isOpen, onRequestClose, layoutRef}) {
         appElement={layoutRef.current}
         ariaHideApp={false}>
             {
-                createPostMutation.isPending && <Loading/>
+                createPostMutation.isPending && <Loading />
             }
             <div css={s.modalLayout}>
                 <header>
@@ -109,9 +109,9 @@ function AddPostModal({isOpen, onRequestClose, layoutRef}) {
                 <main>
                     <div css={s.profileContainer}>
                         <div css={s.profileImg(data.data.imgUrl)}></div>
-                        <div>{data.data.nickname}</div>
+                            <div>{data.data.nickname}</div>
                     </div>
-                    <Select
+                    <Select 
                         options={[
                             {
                                 label: "Public",
@@ -123,31 +123,33 @@ function AddPostModal({isOpen, onRequestClose, layoutRef}) {
                             },
                         ]}
                         value={visibilityOption}
-                        onChange={(option) => setVisibilityOption(option)} />
+                        onChange={(option) => setVisibilityOption(option)} />                       
                     <div css={s.contentInputBox}>
                         <textarea value={textareaValue} onChange={(e) => setTextareaValue(e.target.value)}></textarea>
                     </div>
                     <div css={s.uploadBox} onClick={handleFileLoadOnClick}>
                         <IoCloudUploadOutline />
-                        <div>Please post your story.</div>
+                        <div>Please Post your story.</div>
                         <button>Add Image</button>
                     </div>
                     <div css={s.imageListBox} ref={imageListBoxRef} onWheel={handleOnWheel}>
                         {
                             uploadImages.map((img, index) => (
-                                <div css={s.preview(img.dataURL)}>
+                                <div css={s.preview(img.dataUrl)}>
                                     <div onClick={() => handleImageDeleteOnClick(index)}><IoIosClose /></div>
                                 </div>
                             ))
                         }
+                        
                     </div>
                 </main>
                 <footer>
                     <button css={s.postButton} onClick={handlePostSubmitOnClick}>Post</button>
-                    <button onClick={onRequestClose}>Cancel</button>
+                    <button onClick={onRequestClose}>Cancle</button>
                 </footer>
             </div>
     </ReactModal>
+
 }
 
 export default AddPostModal;
