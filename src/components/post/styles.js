@@ -47,6 +47,10 @@ export const modalLayout = css`
 
 export const postButton = css`
     text-shadow: 0 0 10px #000000aa;
+    &:disabled {
+        cursor: default;
+        color: #777777;
+    }
 `;
 
 export const profileContainer = css`
@@ -154,3 +158,4 @@ export const preview = (url) => css`
         cursor: pointer;
     }
 `
+
